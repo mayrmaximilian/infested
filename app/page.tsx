@@ -8,23 +8,32 @@ import {
   TerminalSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Logo } from "@/components/logo";
 
 const features = [
   {
     title: "Supabase-native auth",
-    description: "Email + password with server actions, middleware, and protected layouts.",
+    description:
+      "Email + password with server actions, middleware, and protected layouts.",
     icon: Lock,
   },
   {
     title: "Shadcn + Tailwind 4",
-    description: "Dark, techy UI kit tuned to infested’s brand colors and gradients.",
+    description:
+      "Dark, techy UI kit tuned to infested’s brand colors and gradients.",
     icon: Sparkles,
   },
   {
     title: "Stateful cockpit",
-    description: "Zustand store keeps session data hydrated across the internal app.",
+    description:
+      "Zustand store keeps session data hydrated across the internal app.",
     icon: TerminalSquare,
   },
 ];
@@ -51,13 +60,6 @@ export default function Home() {
             <Link href="/auth/signup" className="hover:text-white">
               Sign up
             </Link>
-            <Link
-              href="/app"
-              className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/15"
-            >
-              Enter app
-              <ArrowRight className="h-4 w-4" />
-            </Link>
           </nav>
         </header>
 
@@ -77,8 +79,9 @@ export default function Home() {
                   .
                 </h1>
                 <p className="max-w-2xl text-lg text-white/70">
-                  infested is your backstage pass to indie games: verify builds, sync
-                  libraries, and keep pace with drops before they hit the mainstream.
+                  infested is your backstage pass to indie games: verify builds,
+                  sync libraries, and keep pace with drops before they hit the
+                  mainstream.
                 </p>
               </div>
 
@@ -117,8 +120,8 @@ export default function Home() {
               <CardHeader className="relative">
                 <CardTitle>Built for dev velocity</CardTitle>
                 <CardDescription className="text-white/60">
-                  App Router, Supabase, Zod, Zustand, shadcn/ui, server actions, and
-                  middleware out of the box.
+                  App Router, Supabase, Zod, Zustand, shadcn/ui, server actions,
+                  and middleware out of the box.
                 </CardDescription>
               </CardHeader>
               <CardContent className="relative space-y-4">
@@ -131,7 +134,9 @@ export default function Home() {
                       <feature.icon className="h-5 w-5 text-[#22D3EE]" />
                       <h3 className="font-semibold">{feature.title}</h3>
                     </div>
-                    <p className="mt-1 text-sm text-white/60">{feature.description}</p>
+                    <p className="mt-1 text-sm text-white/60">
+                      {feature.description}
+                    </p>
                   </div>
                 ))}
               </CardContent>
@@ -159,7 +164,9 @@ export default function Home() {
               >
                 <CardHeader>
                   <CardTitle>{item.title}</CardTitle>
-                  <CardDescription className="text-white/60">{item.copy}</CardDescription>
+                  <CardDescription className="text-white/60">
+                    {item.copy}
+                  </CardDescription>
                 </CardHeader>
               </Card>
             ))}
