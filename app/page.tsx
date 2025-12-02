@@ -57,9 +57,13 @@ export default function Home() {
             <Link href="/auth/login" className="hover:text-white">
               Log in
             </Link>
-            <Link href="/auth/signup" className="hover:text-white">
-              Sign up
-            </Link>
+            <Button
+              asChild
+              size="sm"
+              className="bg-[#D946EF] text-white hover:bg-[#f160ff]"
+            >
+              <Link href="/auth/signup">Sign up</Link>
+            </Button>
           </nav>
         </header>
 
@@ -86,7 +90,11 @@ export default function Home() {
               </div>
 
               <div className="flex flex-wrap items-center gap-4">
-                <Button asChild size="lg" className="gap-2">
+                <Button
+                  asChild
+                  size="lg"
+                  className="gap-2 bg-[#D946EF] text-white hover:bg-[#f160ff]"
+                >
                   <Link href="/auth/signup">
                     Create free account
                     <ArrowRight className="h-4 w-4" />

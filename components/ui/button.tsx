@@ -8,7 +8,7 @@ const baseStyles =
   "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 ring-offset-black";
 
 const variants = {
-  default: "bg-[#D946EF] text-black hover:bg-[#f160ff]",
+  default: "bg-[#D946EF] text-white !text-white hover:bg-[#f160ff]",
   secondary: "bg-[#111317] text-white border border-[#1f2128] hover:border-[#2b2d35]",
   ghost: "bg-transparent text-white hover:bg-white/5",
   outline: "border border-[#2b2d35] bg-transparent text-white hover:bg-white/5",
