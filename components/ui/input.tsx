@@ -11,7 +11,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "flex h-11 w-full rounded-md border border-[#1f2128] bg-[#0a0b0f] px-3 py-2 text-sm text-white shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]/70",
+          // Use 16px (text-base) to avoid iOS zoom on focus.
+          "flex h-11 w-full rounded-md border border-[#1f2128] bg-[#0a0b0f] px-3 py-2 text-base text-white shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]/70",
           "placeholder:text-white/40",
           "disabled:cursor-not-allowed disabled:opacity-60",
           className
