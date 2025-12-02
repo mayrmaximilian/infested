@@ -1,7 +1,7 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
-import { useFormState } from "react-dom";
 import { signInAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 const initialState = undefined;
 
 export function LoginForm() {
-  const [state, formAction] = useFormState(signInAction, initialState);
+  const [state, formAction] = React.useActionState(signInAction, initialState);
 
   return (
     <Card className="w-full max-w-md border-[#1f2128] bg-[#080a0f]/80 backdrop-blur">

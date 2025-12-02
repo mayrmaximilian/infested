@@ -25,19 +25,19 @@ export async function middleware(req: NextRequest) {
   });
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const isAuthRoute = req.nextUrl.pathname.startsWith("/auth");
   const isAppRoute = req.nextUrl.pathname.startsWith("/app");
 
-  if (!session && isAppRoute) {
+  if (!user && isAppRoute) {
     const redirectUrl = new URL("/auth/login", req.url);
     redirectUrl.searchParams.set("redirectedFrom", req.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (session && isAuthRoute) {
+  if (user && isAuthRoute) {
     return NextResponse.redirect(new URL("/app", req.url));
   }
 

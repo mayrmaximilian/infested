@@ -1,4 +1,5 @@
 import { ArrowUpRight, Flame, Sparkles, Waves } from "lucide-react";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,11 +35,16 @@ const drops = [
 export default async function AppPage() {
   const supabase = await createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/auth/login");
+  }
+
   const displayName =
-    (session?.user.user_metadata as { name?: string })?.name ??
-    session?.user.email?.split("@")[0] ??
+    (user.user_metadata as { name?: string })?.name ??
+    user.email?.split("@")[0] ??
     "Pilot";
 
   return (
