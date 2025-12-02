@@ -22,7 +22,11 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     { data: profile },
   ] = await Promise.all([
     supabase.auth.getSession(),
-    supabase.from("profiles").select("display_name, avatar_url").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("profiles")
+      .select("display_name, avatar_url, role")
+      .eq("id", user.id)
+      .maybeSingle(),
   ]);
 
 
@@ -31,6 +35,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     (user.user_metadata as { name?: string })?.name ||
     user.email?.split("@")[0] ||
     "Player";
+  const role =
+    profile?.role || (user.user_metadata as { role?: string })?.role || "gamer";
   const rawAvatar =
     profile?.avatar_url || (user.user_metadata as { avatarUrl?: string })?.avatarUrl || null;
   const avatarUrl =
@@ -39,7 +45,12 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   return (
     <ResponsiveShell
       sidebar={
-        <Sidebar userEmail={user.email} displayName={displayName} avatarUrl={avatarUrl} />
+        <Sidebar
+          userEmail={user.email}
+          displayName={displayName}
+          avatarUrl={avatarUrl}
+          role={role}
+        />
       }
     >
       <SessionHydrator session={session} />

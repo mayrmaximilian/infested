@@ -22,10 +22,14 @@ const initialState = undefined;
 
 export function ProfileForm({ userId, name, role, avatarUrl }: Props) {
   const [state, formAction] = React.useActionState(updateProfileAction, initialState);
-  const [nameValue, setNameValue] = React.useState(name ?? "");
-  const [roleValue, setRoleValue] = React.useState<"gamer" | "developer">(
+  const [baseName, setBaseName] = React.useState(name ?? "");
+  const [baseRole, setBaseRole] = React.useState<"gamer" | "developer">(
     role === "developer" ? "developer" : "gamer"
   );
+  const [baseAvatar, setBaseAvatar] = React.useState(avatarUrl ?? "");
+
+  const [nameValue, setNameValue] = React.useState(baseName);
+  const [roleValue, setRoleValue] = React.useState<"gamer" | "developer">(baseRole);
   const [isPending, startTransition] = React.useTransition();
   const [avatarValue, setAvatarValue] = React.useState(avatarUrl ?? "");
   const [uploading, setUploading] = React.useState(false);
@@ -35,6 +39,23 @@ export function ProfileForm({ userId, name, role, avatarUrl }: Props) {
   const [showCrop, setShowCrop] = React.useState(false);
   const [cropFile, setCropFile] = React.useState<File | null>(null);
   const [cropPreview, setCropPreview] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    setBaseName(name ?? "");
+    setBaseRole(role === "developer" ? "developer" : "gamer");
+    setBaseAvatar(avatarUrl ?? "");
+    setNameValue(name ?? "");
+    setRoleValue(role === "developer" ? "developer" : "gamer");
+    setAvatarValue(avatarUrl ?? "");
+  }, [name, role, avatarUrl]);
+
+  React.useEffect(() => {
+    if (state?.success) {
+      setBaseName(nameValue);
+      setBaseRole(roleValue);
+      setBaseAvatar(avatarValue);
+    }
+  }, [state?.success, nameValue, roleValue, avatarValue]);
 
   const cropToSquare = (file: File): Promise<{ blob: Blob; ext: string }> => {
     return new Promise((resolve, reject) => {
@@ -174,6 +195,12 @@ export function ProfileForm({ userId, name, role, avatarUrl }: Props) {
     }
   };
 
+  const normalizedBaseAvatar = baseAvatar.replace(/\/avatars\/(?:avatars\/)+/, "/avatars/");
+  const normalizedAvatar = avatarValue.replace(/\/avatars\/(?:avatars\/)+/, "/avatars/");
+
+  const isChanged =
+    nameValue !== baseName || roleValue !== baseRole || normalizedAvatar !== normalizedBaseAvatar;
+
   return (
     <>
       <Card className="border-[#1f2128] bg-[#0b0d12]">
@@ -303,8 +330,8 @@ export function ProfileForm({ userId, name, role, avatarUrl }: Props) {
             ) : null}
 
             <Separator />
-            <Button type="submit" className="w-full">
-              {isPending ? "Saving..." : "Save profile"}
+            <Button type="submit" className="w-full" disabled={!isChanged || isPending}>
+              {isPending ? "Saving..." : isChanged ? "Save profile" : "Saved"}
             </Button>
           </form>
         </CardContent>
