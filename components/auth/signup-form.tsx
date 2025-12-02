@@ -1,0 +1,90 @@
+"use client";
+
+import React from "react";
+import Link from "next/link";
+import { signUpAction } from "@/app/actions/auth";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+const initialState = undefined;
+
+export function SignupForm() {
+  const [state, formAction] = React.useActionState(signUpAction, initialState);
+
+  return (
+    <Card className="w-full max-w-md border-[#1f2128] bg-[#080a0f]/80 backdrop-blur">
+      <CardHeader className="space-y-2">
+        <CardTitle>Join infested</CardTitle>
+        <CardDescription>
+          Build your indie library, follow drops, and support creators.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <form action={formAction} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Display name</Label>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              autoComplete="nickname"
+              placeholder="GhostCrawler"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              placeholder="you@infested.gg"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          {state?.error ? (
+            <p className="rounded-md border border-red-500/50 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+              {state.error}
+            </p>
+          ) : null}
+          {state?.success ? (
+            <p className="rounded-md border border-[#22D3EE]/40 bg-[#22D3EE]/10 px-3 py-2 text-sm text-[#a5f3fc]">
+              {state.success}
+            </p>
+          ) : null}
+
+          <Button type="submit" className="w-full">
+            Create account
+          </Button>
+        </form>
+
+        <p className="text-sm text-white/60">
+          Already in?{" "}
+          <Link className="text-[#22D3EE] underline underline-offset-4" href="/auth/login">
+            Sign in
+          </Link>
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
