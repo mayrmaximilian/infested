@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   ArrowRight,
   Gamepad2,
@@ -7,6 +8,7 @@ import {
   Sparkles,
   TerminalSquare,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -44,7 +46,16 @@ const highlights = [
   { label: "Creator signals", value: "1.2k" },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect("/app");
+  }
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-black text-white">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,#D946EF26,transparent_30%),radial-gradient(circle_at_80%_0%,#22D3EE1f,transparent_32%),radial-gradient(circle_at_60%_80%,#2DD4BF26,transparent_32%)]" />
@@ -180,6 +191,37 @@ export default function Home() {
             ))}
           </section>
         </main>
+        <footer className="mt-16 border-t border-white/5 pt-10 pb-6 text-sm text-white/70">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-3">
+              <Logo className="h-10" />
+              <p className="text-white/60">
+                Built for indie gamers and creators. Stay synced with the swarm.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-4 text-white/70">
+              <Link href="/auth/login" className="hover:text-white">
+                Log in
+              </Link>
+              <Link href="/auth/signup" className="hover:text-white">
+                Sign up
+              </Link>
+              <Link href="/app" className="hover:text-white">
+                Enter app
+              </Link>
+              <a
+                href="mailto:hello@infested.gg"
+                className="hover:text-white"
+                rel="noreferrer"
+              >
+                Contact
+              </a>
+            </div>
+          </div>
+          <div className="mt-4 text-xs text-white/50">
+            © {new Date().getFullYear()} infested. All rights reserved.
+          </div>
+        </footer>
       </div>
     </div>
   );

@@ -61,6 +61,39 @@ export function SignupForm() {
               required
             />
           </div>
+          <div className="space-y-2">
+            <Label>Account type</Label>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <label className="flex items-center gap-3 rounded-md border border-[#1f2128] bg-[#0a0b0f] px-3 py-2 text-sm text-white/80">
+                <input
+                  type="radio"
+                  name="role"
+                  value="gamer"
+                  defaultChecked
+                  className="h-4 w-4 accent-[#D946EF]"
+                />
+                <div>
+                  <p className="font-medium text-white">Gamer</p>
+                  <p className="text-xs text-white/60">Play, follow drops, and build your library.</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-3 rounded-md border border-[#1f2128] bg-[#0a0b0f] px-3 py-2 text-sm text-white/80">
+                <input
+                  type="radio"
+                  name="role"
+                  value="developer"
+                  className="h-4 w-4 accent-[#D946EF]"
+                />
+                <div>
+                  <p className="font-medium text-white">Developer</p>
+                  <p className="text-xs text-white/60">Publish builds, manage playtests, reach players.</p>
+                </div>
+              </label>
+            </div>
+            <p className="text-xs text-white/50">
+              You can change this anytime in profile settings.
+            </p>
+          </div>
 
           {state?.error ? (
             <p className="rounded-md border border-red-500/50 bg-red-500/10 px-3 py-2 text-sm text-red-200">

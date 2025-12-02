@@ -42,9 +42,16 @@ export default async function AppPage() {
     redirect("/auth/login");
   }
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("display_name, avatar_url, role")
+    .eq("id", user.id)
+    .maybeSingle();
+
   const displayName =
-    (user.user_metadata as { name?: string })?.name ??
-    user.email?.split("@")[0] ??
+    profile?.display_name ||
+    (user.user_metadata as { name?: string })?.name ||
+    user.email?.split("@")[0] ||
     "Pilot";
 
   return (

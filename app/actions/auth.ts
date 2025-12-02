@@ -9,6 +9,7 @@ const credentialsSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8, "Password must be at least 8 characters."),
   name: z.string().min(2).max(50).optional(),
+  role: z.enum(["gamer", "developer"]).default("gamer"),
 });
 
 type ActionResult =
@@ -60,7 +61,7 @@ export async function signUpAction(
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      data: { name: parsed.data.name },
+      data: { name: parsed.data.name, role: parsed.data.role },
       emailRedirectTo,
     },
   });
