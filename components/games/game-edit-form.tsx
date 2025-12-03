@@ -26,6 +26,10 @@ export function GameEditForm({ id, title, summary, heroUrl, genre }: Props) {
     undefined
   );
 
+  const deleteHandler = React.useCallback(async (formData: FormData) => {
+    await deleteGamePageAction(formData);
+  }, []);
+
   return (
     <div className="space-y-4">
       <form action={formAction} className="space-y-6">
@@ -114,7 +118,7 @@ export function GameEditForm({ id, title, summary, heroUrl, genre }: Props) {
         </div>
       </form>
 
-      <form action={deleteGamePageAction} className="inline">
+      <form action={deleteHandler} className="inline">
         <input type="hidden" name="id" value={id} />
         <Button variant="destructive" size="sm">
           Delete
