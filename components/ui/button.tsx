@@ -12,6 +12,7 @@ const variants = {
   secondary: "bg-[#111317] text-white border border-[#1f2128] hover:border-[#2b2d35]",
   ghost: "bg-transparent text-white hover:bg-white/5",
   outline: "border border-[#2b2d35] bg-transparent text-white hover:bg-white/5",
+  destructive: "bg-red-500/90 text-white hover:bg-red-500",
 };
 
 const sizes = {

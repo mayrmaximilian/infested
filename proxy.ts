@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { env } from "@/lib/env";
 
-export async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const res = NextResponse.next({
     request: {
       headers: req.headers,
