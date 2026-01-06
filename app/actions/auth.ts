@@ -53,16 +53,11 @@ export async function signUpAction(
   }
 
   const supabase = await createClient();
-  const emailRedirectTo = process.env.NEXT_PUBLIC_SITE_URL
-    ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
-    : undefined;
-
   const { error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
       data: { name: parsed.data.name, role: parsed.data.role },
-      emailRedirectTo,
     },
   });
 
@@ -70,11 +65,8 @@ export async function signUpAction(
     return { error: error.message };
   }
 
-  revalidatePath("/auth/login");
-  return {
-    success:
-      "Account created. Check your inbox for verification or sign in if email confirmation is disabled.",
-  };
+  revalidatePath("/app");
+  redirect("/app");
 }
 
 export async function signOutAction() {

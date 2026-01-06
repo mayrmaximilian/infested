@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { signUpAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +18,14 @@ import { Label } from "@/components/ui/label";
 const initialState = undefined;
 
 export function SignupForm() {
+  const router = useRouter();
   const [state, formAction] = React.useActionState(signUpAction, initialState);
+
+  useEffect(() => {
+    if (state?.success) {
+      router.push("/app");
+    }
+  }, [router, state?.success]);
 
   return (
     <Card className="w-full max-w-md border-[#1f2128] bg-[#080a0f]/80 backdrop-blur">
@@ -103,11 +111,6 @@ export function SignupForm() {
           {state?.error ? (
             <p className="rounded-md border border-red-500/50 bg-red-500/10 px-3 py-2 text-sm text-red-200">
               {state.error}
-            </p>
-          ) : null}
-          {state?.success ? (
-            <p className="rounded-md border border-[#22D3EE]/40 bg-[#22D3EE]/10 px-3 py-2 text-sm text-[#a5f3fc]">
-              {state.success}
             </p>
           ) : null}
 
