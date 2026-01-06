@@ -42,8 +42,7 @@ export default function Loading() {
                 {[1, 2, 3, 4, 5].map((j) => (
                   <Skeleton
                     key={j}
-                    className="flex-shrink-0 rounded-lg"
-                    style={{ width: "140px", height: "175px" }}
+                    className="flex-shrink-0 rounded-lg w-[140px] h-[175px]"
                   />
                 ))}
               </div>

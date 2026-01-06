@@ -190,14 +190,14 @@ export function SocialFriends({
               >
                 {renderProfile(row.user)}
                 <div className="flex items-center gap-2">
-                  <form action={acceptFriendRequestAction}>
+                  <form action={acceptFriendRequestAction as any}>
                     <input type="hidden" name="targetId" value={row.user_id} />
                     <Button size="sm" className="gap-2">
                       <CheckCircle2 className="h-4 w-4" />
                       Accept
                     </Button>
                   </form>
-                  <form action={declineFriendRequestAction}>
+                  <form action={declineFriendRequestAction as any}>
                     <input type="hidden" name="targetId" value={row.user_id} />
                     <Button size="sm" variant="ghost" className="gap-2">
                       <X className="h-4 w-4" />
@@ -228,7 +228,7 @@ export function SocialFriends({
                 {renderProfile(row.user)}
                 <div className="flex items-center gap-2">
                   <StartDirectChat friendId={row.user_id} />
-                  <form action={removeFriendAction}>
+                  <form action={removeFriendAction as any}>
                     <input type="hidden" name="targetId" value={row.user_id} />
                     <Button size="sm" variant="ghost" className="gap-2">
                       <UserMinus className="h-4 w-4" />

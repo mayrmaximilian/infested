@@ -88,7 +88,7 @@ export async function GET() {
     .limit(20);
 
   const followItems: ActivityEntry[] = (followRows ?? []).flatMap((row) => {
-    const game = row.games as ActivityGame | null;
+    const game = (row.games as ActivityGame[] | null)?.[0] || null;
     const profile = profileMap.get(row.user_id);
     if (!game || !profile) return [];
     return [

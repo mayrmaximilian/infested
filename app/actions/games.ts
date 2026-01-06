@@ -419,7 +419,8 @@ export async function deletePitchAction(pitchId: string, gameId: string) {
 
   const isOwner = pitch.user_id === user.id;
   const isGameOwner =
-    (pitch.games as { owner_id: string }).owner_id === user.id;
+    (pitch.games as { owner_id: string }[]).length > 0 &&
+    (pitch.games as { owner_id: string }[])[0].owner_id === user.id;
 
   if (!isOwner && !isGameOwner) {
     return { error: "You can only delete your own pitches." };

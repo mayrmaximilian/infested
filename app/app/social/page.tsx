@@ -190,7 +190,7 @@ export default async function SocialPage({
     : { data: [] };
 
   const followItems: ActivityItem[] = (followRows ?? []).flatMap((row) => {
-    const game = row.games as ActivityGame | null;
+    const game = (row.games as ActivityGame[] | null)?.[0] || null;
     if (!game) return [];
     return [
       {
@@ -443,7 +443,7 @@ export default async function SocialPage({
                         Friends
                       </Button>
                     ) : isOutgoing ? (
-                      <form action={cancelFriendRequestAction}>
+                      <form action={cancelFriendRequestAction as any}>
                         <input
                           type="hidden"
                           name="targetId"
@@ -455,7 +455,7 @@ export default async function SocialPage({
                         </Button>
                       </form>
                     ) : isIncoming ? (
-                      <form action={acceptFriendRequestAction}>
+                      <form action={acceptFriendRequestAction as any}>
                         <input
                           type="hidden"
                           name="targetId"
@@ -467,7 +467,7 @@ export default async function SocialPage({
                         </Button>
                       </form>
                     ) : (
-                      <form action={sendFriendRequestAction}>
+                      <form action={sendFriendRequestAction as any}>
                         <input
                           type="hidden"
                           name="targetId"

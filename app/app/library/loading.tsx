@@ -25,8 +25,7 @@ export default function LibraryLoading() {
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <Skeleton
               key={i}
-              className="rounded-lg"
-              style={{ width: "140px", height: "175px" }}
+              className="rounded-lg w-[140px] h-[175px]"
             />
           ))}
         </div>

@@ -37,7 +37,7 @@ type Tournament = {
     id: string;
     title: string;
     cover_url: string | null;
-  } | null;
+  }[];
   participant_count: number;
   user_entry: {
     current_progress: number;
@@ -221,9 +221,9 @@ export function ChallengesList({
                     tournament.challenge_target
                   )}
                 </span>
-                {tournament.games && (
+                {tournament.games && tournament.games.length > 0 && (
                   <span className="text-sm text-white/40 ml-auto">
-                    Game: {tournament.games.title}
+                    Game: {tournament.games[0].title}
                   </span>
                 )}
               </div>
