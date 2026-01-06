@@ -23,7 +23,13 @@ export function GameCreateForm() {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="title">Game title</Label>
-          <Input id="title" name="title" required maxLength={100} placeholder="Echoes of Glass" />
+          <Input
+            id="title"
+            name="title"
+            required
+            maxLength={100}
+            placeholder="Echoes of Glass"
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="genre">Genre</Label>
@@ -58,6 +64,18 @@ export function GameCreateForm() {
             Wide 16:9 works best (e.g. 1920x1080). Public URL required.
           </p>
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="coverUrl">Cover image URL (4:5)</Label>
+          <Input
+            id="coverUrl"
+            name="coverUrl"
+            type="url"
+            placeholder="https://your-cdn.com/cover.jpg"
+          />
+          <p className="text-xs text-white/50">
+            Portrait 4:5 ratio (e.g. 800x1000). Optional but recommended.
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -75,7 +93,9 @@ export function GameCreateForm() {
         <div className="space-y-2">
           <Label>Extras (optional)</Label>
           <div className="rounded-md border border-[#1f2128] bg-[#0a0b0f] p-3 text-sm text-white/80">
-            <p className="text-xs uppercase tracking-[0.18em] text-white/50">Ideas</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-white/50">
+              Ideas
+            </p>
             <ul className="mt-2 list-disc space-y-1 pl-4 text-white/70">
               <li>Add trailer URL, Discord link, or Steam page once ready.</li>
               <li>Drop key features: co-op, rogue-lite, story-driven, etc.</li>
@@ -96,10 +116,9 @@ export function GameCreateForm() {
           {state.id ? (
             <Link
               className="underline underline-offset-4"
-              href={`/games/${state.id}`}
-              target="_blank"
+              href={`/app/games/${state.id}`}
             >
-              View public page
+              View game page
             </Link>
           ) : null}
         </div>

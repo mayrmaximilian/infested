@@ -19,7 +19,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     {
       data: { session },
     },
-    { data: profile },
+    { data: profileData },
   ] = await Promise.all([
     supabase.auth.getSession(),
     supabase
@@ -28,8 +28,38 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       .eq("id", user.id)
       .maybeSingle(),
   ]);
+  let profile = profileData;
 
+  if (!profile) {
+    const fallbackName =
+      (user.user_metadata as { name?: string })?.name ||
+      user.email?.split("@")[0] ||
+      "Player";
+    const fallbackRole =
+      (user.user_metadata as { role?: string })?.role || "gamer";
+    const fallbackAvatar =
+      (user.user_metadata as { avatarUrl?: string })?.avatarUrl ?? null;
 
+    await supabase.from("profiles").upsert(
+      {
+        id: user.id,
+        display_name: fallbackName,
+        role: fallbackRole,
+        avatar_url: fallbackAvatar,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "id" }
+    );
+
+    const { data: refreshedProfile } = await supabase
+      .from("profiles")
+      .select("display_name, avatar_url, role")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (refreshedProfile) {
+      profile = refreshedProfile;
+    }
+  }
   const displayName =
     profile?.display_name ||
     (user.user_metadata as { name?: string })?.name ||

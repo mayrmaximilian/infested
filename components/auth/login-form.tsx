@@ -4,7 +4,13 @@ import React from "react";
 import Link from "next/link";
 import { signInAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -17,7 +23,9 @@ export function LoginForm() {
     <Card className="w-full max-w-md border-[#1f2128] bg-[#080a0f]/80 backdrop-blur">
       <CardHeader className="space-y-2">
         <CardTitle>Welcome back</CardTitle>
-        <CardDescription>Sign in to access the infested hub.</CardDescription>
+        <CardDescription>
+          Track drops, sync your library, and keep pulse on creators you love.
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <form action={formAction} className="space-y-4">
@@ -57,7 +65,10 @@ export function LoginForm() {
 
         <p className="text-sm text-white/60">
           New here?{" "}
-          <Link className="text-[#22D3EE] underline underline-offset-4" href="/auth/signup">
+          <Link
+            className="text-[#22D3EE] underline underline-offset-4"
+            href="/auth/signup"
+          >
             Create an account
           </Link>
         </p>

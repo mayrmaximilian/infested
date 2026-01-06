@@ -8,6 +8,9 @@ import {
   PanelsTopLeft,
   Radar,
   Rocket,
+  Trophy,
+  Target,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,12 +24,13 @@ type LinkItem = {
 const links: LinkItem[] = [
   { href: "/app", label: "Overview", icon: LayoutDashboard },
   { href: "/app/library", label: "Library", icon: Gamepad2 },
-  { href: "/app/discover", label: "Discover", icon: Radar },
-  { href: "/app/creators", label: "Creators", icon: PanelsTopLeft },
+  { href: "/app/social", label: "Social", icon: Users },
+  { href: "/app/challenges", label: "Challenges", icon: Target },
+  { href: "/app/leaderboard", label: "Leaderboard", icon: Trophy },
 ];
 
 const devLinks: LinkItem[] = [
-  { href: "/app/games", label: "My games", icon: Rocket, role: "developer" },
+  // My games moved to sidebar
 ];
 
 export function NavLinks({ role }: { role?: string | null }) {
@@ -64,9 +68,6 @@ export function NavLinks({ role }: { role?: string | null }) {
       })}
       {role === "developer" && (
         <div className="mt-4 space-y-1.5">
-          <p className="px-3 text-xs uppercase tracking-[0.2em] text-white/50">
-            Developer
-          </p>
           {devLinks.map((link) => {
             const Icon = link.icon;
             const active = isActive(link.href);

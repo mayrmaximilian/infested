@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { updateGamePageAction, deleteGamePageAction } from "@/app/actions/games";
+import { updateGamePageAction } from "@/app/actions/games";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,18 +17,22 @@ type Props = {
   title: string;
   summary: string;
   heroUrl: string;
+  coverUrl: string;
   genre: string;
 };
 
-export function GameEditForm({ id, title, summary, heroUrl, genre }: Props) {
+export function GameEditForm({
+  id,
+  title,
+  summary,
+  heroUrl,
+  coverUrl,
+  genre,
+}: Props) {
   const [state, formAction] = React.useActionState<ActionState, FormData>(
     updateGamePageAction,
     undefined
   );
-
-  const deleteHandler = React.useCallback(async (formData: FormData) => {
-    await deleteGamePageAction(formData);
-  }, []);
 
   return (
     <div className="space-y-4">
@@ -38,7 +42,13 @@ export function GameEditForm({ id, title, summary, heroUrl, genre }: Props) {
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="title">Game title</Label>
-            <Input id="title" name="title" required maxLength={100} defaultValue={title} />
+            <Input
+              id="title"
+              name="title"
+              required
+              maxLength={100}
+              defaultValue={title}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="genre">Genre</Label>
@@ -74,6 +84,19 @@ export function GameEditForm({ id, title, summary, heroUrl, genre }: Props) {
               Wide 16:9 works best (e.g. 1920x1080). Public URL required.
             </p>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="coverUrl">Cover image URL (4:5)</Label>
+            <Input
+              id="coverUrl"
+              name="coverUrl"
+              type="url"
+              defaultValue={coverUrl}
+              placeholder="https://your-cdn.com/cover.jpg"
+            />
+            <p className="text-xs text-white/50">
+              Portrait 4:5 ratio (e.g. 800x1000). Optional but recommended.
+            </p>
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -99,10 +122,9 @@ export function GameEditForm({ id, title, summary, heroUrl, genre }: Props) {
             {state.id ? (
               <Link
                 className="underline underline-offset-4"
-                href={`/games/${state.id}`}
-                target="_blank"
+                href={`/app/games/${state.id}`}
               >
-                View public page
+                View game page
               </Link>
             ) : null}
           </div>
@@ -116,13 +138,6 @@ export function GameEditForm({ id, title, summary, heroUrl, genre }: Props) {
             <Link href="/app/games">Back to list</Link>
           </Button>
         </div>
-      </form>
-
-      <form action={deleteHandler} className="inline">
-        <input type="hidden" name="id" value={id} />
-        <Button variant="destructive" size="sm">
-          Delete
-        </Button>
       </form>
     </div>
   );

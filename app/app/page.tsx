@@ -1,36 +1,29 @@
-import { ArrowUpRight, Flame, Sparkles, Waves } from "lucide-react";
+import {
+  ArrowUpRight,
+  Flame,
+  Sparkles,
+  TrendingUp,
+  Clock,
+  Star,
+  Trophy,
+  Library,
+  Gift,
+} from "lucide-react";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import { GameSlider } from "@/components/games/game-slider";
+import { GameSearch } from "@/components/games/game-search";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+  getLeaderboard,
+  getUserStats,
+  getActiveTournaments,
+} from "@/app/actions/gamification";
+import { DashboardLeaderboard } from "@/components/gamification/dashboard-leaderboard";
+import { TournamentsWidget } from "@/components/gamification/tournaments-widget";
 
-const featured = [
-  {
-    title: "Neon Warden",
-    meta: "Rogue-lite • PC + SteamDeck",
-    tag: "new build",
-    accent: "from-[#D946EF] via-[#22D3EE] to-[#2DD4BF]",
-  },
-  {
-    title: "Echoes of Glass",
-    meta: "Adventure • Cloud saves",
-    tag: "playtest",
-    accent: "from-[#22D3EE] via-[#2DD4BF] to-[#D946EF]",
-  },
-];
-
-const drops = [
-  { name: "Synth Run", time: "Today, 6:00 PM UTC", signal: "Creator AMA" },
-  { name: "Glitch Shore", time: "Tomorrow", signal: "New build" },
-  { name: "Orbitbreaker", time: "Friday", signal: "Exclusive skin" },
-];
+export const dynamic = "force-dynamic";
 
 export default async function AppPage() {
   const supabase = await createClient();
@@ -54,145 +47,198 @@ export default async function AppPage() {
     user.email?.split("@")[0] ||
     "Pilot";
 
+  // Fetch newest games (most recently created)
+  const { data: newestGames } = await supabase
+    .from("games")
+    .select("id, title, cover_url, genre, created_at")
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  // Fetch hottest games (most wishlisted/followed)
+  const { data: hottestGames } = await supabase
+    .from("games")
+    .select("id, title, cover_url, genre, wishlist_count, followers_count")
+    .order("wishlist_count", { ascending: false })
+    .limit(10);
+
+  // For recommended, we'll show a random mix or games user hasn't seen
+  const { data: recommendedGames } = await supabase
+    .from("games")
+    .select("id, title, cover_url, genre")
+    .order("updated_at", { ascending: false })
+    .limit(10);
+
+  // Fetch leaderboard data, user stats, and tournaments
+  const [leaderboardEntries, userStats, tournaments] = await Promise.all([
+    getLeaderboard(20),
+    getUserStats(),
+    getActiveTournaments(),
+  ]);
+
+  // Count user's followed games
+  const { count: followedCount } = await supabase
+    .from("game_follows")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", user.id);
+
   return (
-    <div className="space-y-10">
-      <header className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div className="space-y-1">
-          <p className="text-sm uppercase tracking-[0.2em] text-white/50">
-            cockpit
-          </p>
-          <h1 className="text-3xl font-semibold">Welcome back, {displayName}</h1>
-          <p className="text-white/60">
-            Track new drops, sync your indie collection, and stay ahead of the swarm.
-          </p>
+    <div className="space-y-6">
+      {/* Hero Header with Stats */}
+      <header className="rounded-2xl border border-[#1f2128] bg-gradient-to-br from-[#0b0d12] via-[#0f0f18] to-[#1a0f1c] p-6">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-1">
+            <p className="text-sm uppercase tracking-[0.2em] text-white/50">
+              cockpit
+            </p>
+            <h1 className="text-2xl font-semibold lg:text-3xl">
+              Welcome back, {displayName}
+            </h1>
+            <p className="text-sm text-white/60">
+              Discover indie games, track drops, and climb the ranks.
+            </p>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="flex flex-wrap gap-3">
+            <div className="flex items-center gap-3 rounded-xl bg-white/5 px-4 py-2 ring-1 ring-white/10">
+              <Trophy className="h-5 w-5 text-[#D946EF]" />
+              <div>
+                <p className="text-xs text-white/50">Level</p>
+                <p className="font-semibold">{userStats?.level ?? 1}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 rounded-xl bg-white/5 px-4 py-2 ring-1 ring-white/10">
+              <Star className="h-5 w-5 text-[#22D3EE]" />
+              <div>
+                <p className="text-xs text-white/50">XP</p>
+                <p className="font-semibold">
+                  {(userStats?.monthly_xp ?? 0).toLocaleString()}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 rounded-xl bg-white/5 px-4 py-2 ring-1 ring-white/10">
+              <Library className="h-5 w-5 text-emerald-400" />
+              <div>
+                <p className="text-xs text-white/50">Following</p>
+                <p className="font-semibold">{followedCount ?? 0}</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" className="gap-2">
-            <Sparkles className="h-4 w-4" />
-            Creator feed
-          </Button>
-          <Button className="gap-2">
-            Launch game
-            <ArrowUpRight className="h-4 w-4" />
-          </Button>
+
+        <div className="mt-6">
+          <GameSearch />
         </div>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {featured.map((item) => (
-          <Card
-            key={item.title}
-            className="relative overflow-hidden border-[#1f2128]/80 bg-[#0b0d12]"
-          >
-            <div
-              className={`absolute inset-x-0 -top-20 h-40 bg-gradient-to-br ${item.accent} opacity-30 blur-3xl`}
-            />
-            <CardHeader className="relative">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
-                <Flame className="h-3 w-3" />
-                {item.tag}
-              </div>
-              <CardTitle className="text-2xl">{item.title}</CardTitle>
-              <CardDescription className="text-white/60">
-                {item.meta}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="relative">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-white/60">
-                  Sync progress, cross-save, cloud builds.
+      {/* Main Content Grid */}
+      <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
+        {/* Left Column - Games */}
+        <div className="space-y-8 min-w-0">
+          {/* Hottest Games */}
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#D946EF]/20 to-[#D946EF]/5">
+                  <TrendingUp className="h-4 w-4 text-[#D946EF]" />
                 </div>
-                <Button variant="secondary" className="gap-2">
-                  Jump in
-                  <ArrowUpRight className="h-4 w-4" />
+                <h2 className="text-lg font-semibold">Trending</h2>
+              </div>
+              <Link href="/app/games">
+                <Button variant="ghost" size="sm" className="gap-1 text-xs">
+                  View all
+                  <ArrowUpRight className="h-3 w-3" />
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-        <Card className="border-[#1f2128]/80 bg-[#0b0d12]">
-          <CardHeader>
-            <CardTitle>Signal watch</CardTitle>
-            <CardDescription>Upcoming drops across your followed games.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {drops.map((drop) => (
-              <div
-                key={drop.name}
-              className="rounded-lg border border-[#1f2128] bg-white/5 px-4 py-3"
-              >
-                <div className="flex items-center justify-between">
-                  <p className="font-medium text-white">{drop.name}</p>
-                  <span className="text-xs uppercase tracking-[0.18em] text-[#22D3EE]">
-                    {drop.signal}
-                  </span>
-                </div>
-                <p className="text-sm text-white/60">{drop.time}</p>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="border-[#1f2128]/80 bg-[#0b0d12]">
-          <CardHeader>
-            <CardTitle>Community heat</CardTitle>
-            <CardDescription>
-              Quick stats from the infested network right now.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-3">
-            {[
-              { label: "Players online", value: "18,402", icon: Waves },
-              { label: "Active playtests", value: "23", icon: Sparkles },
-              { label: "Creator posts", value: "117", icon: Flame },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="rounded-lg border border-[#1f2128] bg-white/5 px-4 py-3"
-              >
-                <div className="flex items-center gap-2 text-[#22D3EE]">
-                  <item.icon className="h-4 w-4" />
-                  <p className="text-xs uppercase tracking-[0.18em] text-white/60">
-                    {item.label}
-                  </p>
-                </div>
-                <p className="mt-2 text-2xl font-semibold text-white">
-                  {item.value}
-                </p>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card className="border-[#1f2128]/80 bg-gradient-to-br from-[#0b0d12] via-[#0b0d12] to-[#11121a]">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>Patch feed</CardTitle>
-              <CardDescription>Fresh notes from your installs.</CardDescription>
+              </Link>
             </div>
-            <Button variant="ghost" className="gap-2">
-              View all
-              <ArrowUpRight className="h-4 w-4" />
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {["Balance pass for Echoes", "New biome: Neon Warden", "Co-op matchmaking updates"].map(
-              (item, idx) => (
-                <div key={item} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="font-medium text-white">{item}</p>
-                    <span className="text-xs text-white/50">
-                      {idx === 0 ? "3m ago" : idx === 1 ? "1h ago" : "Today"}
-                    </span>
-                  </div>
-                  {idx < 2 && <Separator />}
+            <GameSlider
+              games={hottestGames ?? []}
+              emptyMessage="No hot games yet."
+            />
+          </section>
+
+          {/* New Releases */}
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#22D3EE]/20 to-[#22D3EE]/5">
+                  <Clock className="h-4 w-4 text-[#22D3EE]" />
                 </div>
-              )
-            )}
-          </CardContent>
-        </Card>
+                <h2 className="text-lg font-semibold">New Releases</h2>
+              </div>
+              <Link href="/app/games">
+                <Button variant="ghost" size="sm" className="gap-1 text-xs">
+                  View all
+                  <ArrowUpRight className="h-3 w-3" />
+                </Button>
+              </Link>
+            </div>
+            <GameSlider
+              games={newestGames ?? []}
+              emptyMessage="No games yet."
+            />
+          </section>
+
+          {/* Recommended */}
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-400/20 to-emerald-400/5">
+                  <Sparkles className="h-4 w-4 text-emerald-400" />
+                </div>
+                <h2 className="text-lg font-semibold">For You</h2>
+              </div>
+              <Link href="/app/games">
+                <Button variant="ghost" size="sm" className="gap-1 text-xs">
+                  View all
+                  <ArrowUpRight className="h-3 w-3" />
+                </Button>
+              </Link>
+            </div>
+            <GameSlider
+              games={recommendedGames ?? []}
+              emptyMessage="Follow more games to get recommendations!"
+            />
+          </section>
+        </div>
+
+        {/* Right Column - Leaderboard & Tournaments */}
+        <aside className="space-y-6">
+          {/* Top Players */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#D946EF]/20 to-[#D946EF]/5">
+                  <Trophy className="h-4 w-4 text-[#D946EF]" />
+                </div>
+                <h2 className="text-lg font-semibold">Top Players</h2>
+              </div>
+              <Link href="/app/leaderboard">
+                <Button variant="ghost" size="sm" className="gap-1 text-xs">
+                  Full list
+                  <ArrowUpRight className="h-3 w-3" />
+                </Button>
+              </Link>
+            </div>
+            <DashboardLeaderboard
+              entries={leaderboardEntries}
+              currentUserId={user.id}
+            />
+          </div>
+
+          {/* Weekly Tournaments */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500/20 to-orange-500/5">
+                  <Gift className="h-4 w-4 text-amber-400" />
+                </div>
+                <h2 className="text-lg font-semibold">Weekly Challenges</h2>
+              </div>
+            </div>
+            <TournamentsWidget tournaments={tournaments} />
+          </div>
+        </aside>
       </div>
     </div>
   );

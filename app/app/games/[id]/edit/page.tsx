@@ -1,9 +1,19 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { GameEditForm } from "@/components/games/game-edit-form";
 
-export default async function EditGamePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditGamePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   if (!id || id === "undefined") {
     notFound();
@@ -20,7 +30,7 @@ export default async function EditGamePage({ params }: { params: Promise<{ id: s
 
   const { data: game } = await supabase
     .from("games")
-    .select("id, owner_id, title, summary, hero_url, genre")
+    .select("id, owner_id, title, summary, hero_url, cover_url, genre")
     .eq("id", id)
     .maybeSingle();
 
@@ -35,7 +45,9 @@ export default async function EditGamePage({ params }: { params: Promise<{ id: s
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm uppercase tracking-[0.2em] text-white/50">Game pages</p>
+        <p className="text-sm uppercase tracking-[0.2em] text-white/50">
+          Game pages
+        </p>
         <h1 className="text-3xl font-semibold">Edit landing page</h1>
         <p className="text-white/60">Update your public landing page.</p>
       </div>
@@ -50,6 +62,7 @@ export default async function EditGamePage({ params }: { params: Promise<{ id: s
             title={game.title}
             summary={game.summary ?? ""}
             heroUrl={game.hero_url ?? ""}
+            coverUrl={game.cover_url ?? ""}
             genre={game.genre ?? "other"}
           />
         </CardContent>

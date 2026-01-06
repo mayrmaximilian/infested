@@ -6,16 +6,27 @@ import { Separator } from "@/components/ui/separator";
 
 export const dynamic = "force-dynamic";
 
-const featureChips = ["PC + Deck ready", "Cloud saves", "Controller friendly", "Indie crafted"];
+const featureChips = [
+  "PC + Deck ready",
+  "Cloud saves",
+  "Controller friendly",
+  "Indie crafted",
+];
 
-export default async function GameLandingPage({ params }: { params: { id: string } }) {
+export default async function GameLandingPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   if (!params.id || params.id === "undefined") {
     notFound();
   }
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("games")
-    .select("id, title, summary, hero_url, genre, wishlist_count, followers_count, status")
+    .select(
+      "id, title, summary, hero_url, cover_url, genre, wishlist_count, followers_count, status"
+    )
     .eq("id", params.id)
     .maybeSingle();
 
@@ -23,7 +34,9 @@ export default async function GameLandingPage({ params }: { params: { id: string
     return (
       <div className="min-h-screen bg-black px-6 py-12 text-white">
         <div className="mx-auto max-w-3xl space-y-4 rounded-2xl border border-white/10 bg-[#0b0d12] p-6">
-          <h1 className="text-2xl font-semibold">Couldn&apos;t load game page</h1>
+          <h1 className="text-2xl font-semibold">
+            Couldn&apos;t load game page
+          </h1>
           <p className="text-white/70">
             {error.message || "Something went wrong fetching this page."}
           </p>
@@ -58,7 +71,25 @@ export default async function GameLandingPage({ params }: { params: { id: string
           <div className="h-full w-full bg-[radial-gradient(circle_at_20%_20%,#D946EF33,transparent_35%),radial-gradient(circle_at_80%_0%,#22D3EE33,transparent_35%),linear-gradient(135deg,#0a0a12,#05060a)]" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
-        <div className="absolute bottom-8 left-8 right-8">
+
+        {/* Cover image overlay (4:5 aspect ratio, always cropped to fit) */}
+        {data.cover_url && (
+          <div className="absolute bottom-8 left-8 h-[200px] w-[160px] overflow-hidden rounded-lg border border-white/10 shadow-xl bg-black/50">
+            <NextImage
+              src={data.cover_url}
+              alt={`${data.title} cover`}
+              fill
+              className="object-cover object-center"
+              unoptimized
+            />
+          </div>
+        )}
+
+        <div
+          className={`absolute bottom-8 right-8 ${
+            data.cover_url ? "left-[200px]" : "left-8"
+          }`}
+        >
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="space-y-3">
               <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1 text-xs uppercase tracking-[0.18em] text-white/70">
@@ -67,10 +98,15 @@ export default async function GameLandingPage({ params }: { params: { id: string
               </p>
               <h1 className="text-4xl font-semibold">{data.title}</h1>
               <p className="max-w-3xl text-white/70">{data.summary}</p>
-              <p className="text-xs uppercase tracking-[0.18em] text-[#D946EF]">{genre}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-[#D946EF]">
+                {genre}
+              </p>
               <div className="flex flex-wrap gap-2 text-xs text-white/70">
                 {featureChips.map((chip) => (
-                  <span key={chip} className="rounded-full bg-white/10 px-3 py-1">
+                  <span
+                    key={chip}
+                    className="rounded-full bg-white/10 px-3 py-1"
+                  >
                     {chip}
                   </span>
                 ))}
@@ -95,8 +131,13 @@ export default async function GameLandingPage({ params }: { params: { id: string
               key={m.label}
               className="rounded-xl border border-[#1f2128] bg-[#0b0d12] p-4 shadow-[0_20px_60px_-50px_#000]"
             >
-              <p className="text-xs uppercase tracking-[0.2em] text-white/60">{m.label}</p>
-              <p className="mt-2 text-2xl font-semibold" style={{ color: m.color }}>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/60">
+                {m.label}
+              </p>
+              <p
+                className="mt-2 text-2xl font-semibold"
+                style={{ color: m.color }}
+              >
                 {m.value}
               </p>
             </div>

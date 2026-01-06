@@ -24,7 +24,8 @@ export function SignupForm() {
       <CardHeader className="space-y-2">
         <CardTitle>Join infested</CardTitle>
         <CardDescription>
-          Build your indie library, follow drops, and support creators.
+          Track releases, build your library, compete in challenges, and earn
+          XP.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -74,7 +75,9 @@ export function SignupForm() {
                 />
                 <div>
                   <p className="font-medium text-white">Gamer</p>
-                  <p className="text-xs text-white/60">Play, follow drops, and build your library.</p>
+                  <p className="text-xs text-white/60">
+                    Play, follow drops, and build your library.
+                  </p>
                 </div>
               </label>
               <label className="flex items-center gap-3 rounded-md border border-[#1f2128] bg-[#0a0b0f] px-3 py-2 text-sm text-white/80">
@@ -86,7 +89,9 @@ export function SignupForm() {
                 />
                 <div>
                   <p className="font-medium text-white">Developer</p>
-                  <p className="text-xs text-white/60">Publish builds, manage playtests, reach players.</p>
+                  <p className="text-xs text-white/60">
+                    Publish builds, manage playtests, reach players.
+                  </p>
                 </div>
               </label>
             </div>
@@ -113,7 +118,10 @@ export function SignupForm() {
 
         <p className="text-sm text-white/60">
           Already in?{" "}
-          <Link className="text-[#22D3EE] underline underline-offset-4" href="/auth/login">
+          <Link
+            className="text-[#22D3EE] underline underline-offset-4"
+            href="/auth/login"
+          >
             Sign in
           </Link>
         </p>
