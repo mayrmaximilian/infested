@@ -74,10 +74,8 @@ export function SocialFriends({
   const supabase = useMemo(() => createClient(), []);
   const session = useAuthStore((state) => state.session);
   const { notify, setBaseline } = useSocialTabs();
-  const [incoming, setIncoming] =
-    useState<FriendEntry[]>(initialIncoming);
-  const [accepted, setAccepted] =
-    useState<FriendEntry[]>(initialAccepted);
+  const [incoming, setIncoming] = useState<FriendEntry[]>(initialIncoming);
+  const [accepted, setAccepted] = useState<FriendEntry[]>(initialAccepted);
   const [authReady, setAuthReady] = useState(false);
   const refreshTimerRef = useRef<number | null>(null);
   const signatureRef = useRef<string>("");
@@ -92,8 +90,14 @@ export function SocialFriends({
   }, [initialAccepted]);
 
   useEffect(() => {
-    const incomingIds = incoming.map((row) => row.id).sort().join(",");
-    const acceptedIds = accepted.map((row) => row.id).sort().join(",");
+    const incomingIds = incoming
+      .map((row) => row.id)
+      .sort()
+      .join(",");
+    const acceptedIds = accepted
+      .map((row) => row.id)
+      .sort()
+      .join(",");
     const signature = `${incomingIds}|${acceptedIds}`;
 
     if (!initializedRef.current) {

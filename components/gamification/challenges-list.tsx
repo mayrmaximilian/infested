@@ -190,13 +190,13 @@ export function ChallengesList({
                   </p>
                 </div>
               </div>
-                <div className="flex items-center gap-2 text-sm text-white/50">
-                  <Calendar className="h-4 w-4" />
-                  <span>
-                    Ends {isMounted ? formatDate(tournament.ends_at) : "—"}
-                  </span>
-                </div>
+              <div className="flex items-center gap-2 text-sm text-white/50">
+                <Calendar className="h-4 w-4" />
+                <span>
+                  Ends {isMounted ? formatDate(tournament.ends_at) : "—"}
+                </span>
               </div>
+            </div>
 
             <div className="p-6">
               {/* Main content */}

@@ -23,10 +23,7 @@ export default function LibraryLoading() {
         {/* Games Grid */}
         <div className="flex flex-wrap gap-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <Skeleton
-              key={i}
-              className="rounded-lg w-[140px] h-[175px]"
-            />
+            <Skeleton key={i} className="rounded-lg w-[140px] h-[175px]" />
           ))}
         </div>
       </section>

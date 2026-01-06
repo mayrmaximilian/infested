@@ -124,7 +124,10 @@ export default async function SocialPage({
     : { data: [] };
 
   const profileMap = new Map(
-    (relatedProfiles ?? []).map((profile) => [profile.id, profile as FriendProfile])
+    (relatedProfiles ?? []).map((profile) => [
+      profile.id,
+      profile as FriendProfile,
+    ])
   );
 
   const pendingIncoming = (friendships ?? []).filter(
@@ -133,7 +136,9 @@ export default async function SocialPage({
   const pendingOutgoing = (friendships ?? []).filter(
     (row) => row.status === "pending" && row.requester_id === user.id
   );
-  const accepted = (friendships ?? []).filter((row) => row.status === "accepted");
+  const accepted = (friendships ?? []).filter(
+    (row) => row.status === "accepted"
+  );
 
   const acceptedFriendIds = new Set<string>();
   accepted.forEach((row) => {
@@ -294,7 +299,10 @@ export default async function SocialPage({
     : { data: [] };
 
   const chatProfileMap = new Map(
-    (directProfiles ?? []).map((profile) => [profile.id, profile as ChatProfile])
+    (directProfiles ?? []).map((profile) => [
+      profile.id,
+      profile as ChatProfile,
+    ])
   );
 
   acceptedProfiles.forEach((profile) => {
