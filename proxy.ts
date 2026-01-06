@@ -3,7 +3,31 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { env } from "@/lib/env";
 
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "infested2026";
+
 export default async function proxy(req: NextRequest) {
+  const pathname = req.nextUrl.pathname;
+
+  // Check for password protection
+  const passwordCookie = req.cookies.get("app_password");
+  const isPasswordPage = pathname === "/password";
+  const isPasswordValid = passwordCookie?.value === ADMIN_PASSWORD;
+
+  // If password page, allow access
+  if (isPasswordPage) {
+    const res = NextResponse.next({
+      request: {
+        headers: req.headers,
+      },
+    });
+    return res;
+  }
+
+  // If no valid password, redirect to password page for all routes except /password
+  if (!isPasswordValid) {
+    return NextResponse.redirect(new URL("/password", req.url));
+  }
+
   const res = NextResponse.next({
     request: {
       headers: req.headers,
@@ -28,12 +52,12 @@ export default async function proxy(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isAuthRoute = req.nextUrl.pathname.startsWith("/auth");
-  const isAppRoute = req.nextUrl.pathname.startsWith("/app");
+  const isAuthRoute = pathname.startsWith("/auth");
+  const isAppRoute = pathname.startsWith("/app");
 
   if (!user && isAppRoute) {
     const redirectUrl = new URL("/auth/login", req.url);
-    redirectUrl.searchParams.set("redirectedFrom", req.nextUrl.pathname);
+    redirectUrl.searchParams.set("redirectedFrom", pathname);
     return NextResponse.redirect(redirectUrl);
   }
 
@@ -45,5 +69,5 @@ export default async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/app/:path*", "/auth/:path*"],
+  matcher: ["/((?!_next|public|favicon.ico|api).*)", "/"],
 };
