@@ -261,7 +261,8 @@ export async function deleteChallengeAction(
 
   if (
     !challenge ||
-    (challenge.games as { owner_id: string }).owner_id !== user.id
+    (challenge.games as { owner_id: string }[]).length === 0 ||
+    (challenge.games as { owner_id: string }[])[0].owner_id !== user.id
   ) {
     return { error: "You can only delete challenges from your own games." };
   }
