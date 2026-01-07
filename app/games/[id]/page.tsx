@@ -113,7 +113,7 @@ export default async function GameLandingPage({
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <Button variant="secondary">Wishlist</Button>
+              <Button variant="secondary">Buy game</Button>
               <Button>Follow updates</Button>
             </div>
           </div>
@@ -162,7 +162,7 @@ export default async function GameLandingPage({
             </div>
             <div className="flex gap-3">
               <Button variant="secondary">Follow</Button>
-              <Button>Wishlist</Button>
+              <Button>Buy game</Button>
             </div>
           </div>
         </div>
