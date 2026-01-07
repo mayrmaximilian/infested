@@ -17,11 +17,13 @@ export default function Loading() {
             <Skeleton className="h-14 w-24 rounded-xl" />
           </div>
         </div>
-        <div className="mt-6 flex flex-wrap gap-2">
-          <Skeleton className="h-9 w-32" />
-          <Skeleton className="h-9 w-36" />
-          <Skeleton className="h-9 w-28" />
-          <Skeleton className="h-9 w-32" />
+        <div className="mt-6">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Skeleton className="h-11 flex-1" />
+              <Skeleton className="h-11 w-28" />
+            </div>
+          </div>
         </div>
       </div>
 

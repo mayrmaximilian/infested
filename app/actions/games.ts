@@ -255,15 +255,21 @@ export async function deleteChallengeAction(
   // Verify user owns the game this challenge belongs to
   const { data: challenge } = await supabase
     .from("challenges")
-    .select("game_id, games!inner(owner_id)")
+    .select("game_id")
     .eq("id", challengeId)
     .maybeSingle();
 
-  if (
-    !challenge ||
-    (challenge.games as { owner_id: string }[]).length === 0 ||
-    (challenge.games as { owner_id: string }[])[0].owner_id !== user.id
-  ) {
+  if (!challenge) {
+    return { error: "Challenge not found." };
+  }
+
+  const { data: game } = await supabase
+    .from("games")
+    .select("owner_id")
+    .eq("id", challenge.game_id)
+    .maybeSingle();
+
+  if (!game || game.owner_id !== user.id) {
     return { error: "You can only delete challenges from your own games." };
   }
 

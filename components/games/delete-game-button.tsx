@@ -51,7 +51,7 @@ export function DeleteGameButton({ gameId, gameTitle }: DeleteGameButtonProps) {
   const dialog = showDialog ? (
     <>
       <div
-        className="fixed inset-0 z-9998 bg-black/60"
+        className="fixed inset-0 z-[9998] bg-black/60"
         style={{
           backdropFilter: "blur(8px)",
           WebkitBackdropFilter: "blur(8px)",
@@ -61,7 +61,7 @@ export function DeleteGameButton({ gameId, gameTitle }: DeleteGameButtonProps) {
         aria-hidden="true"
       />
       <div
-        className="fixed inset-0 z-9999 flex items-center justify-center pointer-events-none"
+        className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none"
         style={{ left: isLargeScreen ? "18rem" : 0 }}
       >
         <div className="relative w-full max-w-lg rounded-lg border border-[#1f2128] bg-[#0b0d12] p-6 shadow-lg mx-4 pointer-events-auto">

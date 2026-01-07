@@ -73,7 +73,7 @@ export default async function LibraryPage() {
       {games.length > 0 ? (
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-linear-to-br from-[#D946EF]/20 to-[#D946EF]/5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[#D946EF]/20 to-[#D946EF]/5">
               <Library className="h-5 w-5 text-[#D946EF]" />
             </div>
             <div>
@@ -116,12 +116,12 @@ export default async function LibraryPage() {
                     />
                   ) : (
                     <div
-                      className="absolute inset-0 bg-linear-to-br from-[#D946EF]/20 to-[#22D3EE]/20"
+                      className="absolute inset-0 bg-gradient-to-br from-[#D946EF]/20 to-[#22D3EE]/20"
                       style={{ position: "absolute", inset: 0 }}
                     />
                   )}
                   {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
                   {/* Title on hover */}
                   <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full transition-transform group-hover:translate-y-0">

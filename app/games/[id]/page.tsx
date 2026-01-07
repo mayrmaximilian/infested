@@ -3,6 +3,8 @@ import NextImage from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { UpdatesSection } from "@/components/games/updates-section";
+import { getGameUpdates } from "@/app/actions/updates";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +27,7 @@ export default async function GameLandingPage({
   const { data, error } = await supabase
     .from("games")
     .select(
-      "id, title, summary, hero_url, cover_url, genre, wishlist_count, followers_count, status"
+      "id, title, summary, hero_url, cover_url, genre, wishlist_count, followers_count, status, owner_id"
     )
     .eq("id", params.id)
     .maybeSingle();
@@ -49,6 +51,13 @@ export default async function GameLandingPage({
   if (!data) {
     notFound();
   }
+
+  // Fetch game updates and check if user is owner
+  const updates = await getGameUpdates(params.id);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isOwner = user?.id === data.owner_id;
 
   const wishlist = data.wishlist_count ?? "—";
   const followers = data.followers_count ?? "—";
@@ -151,6 +160,12 @@ export default async function GameLandingPage({
             {data.summary || "The developer will add more details soon."}
           </p>
         </div>
+
+        <UpdatesSection
+          gameId={params.id}
+          updates={updates}
+          isOwner={isOwner}
+        />
 
         <div className="rounded-2xl border border-[#1f2128] bg-[#0b0d12] p-6 shadow-[0_25px_80px_-60px_#000]">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

@@ -9,6 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   createChallengeAction,
   deleteChallengeAction,
 } from "@/app/actions/games";
@@ -30,45 +37,43 @@ interface ChallengesManagerProps {
   gameId: string;
   challenges: Challenge[];
   isOwner: boolean;
+  showHeader?: boolean;
 }
 
 export function ChallengesManager({
   gameId,
   challenges,
   isOwner,
+  showHeader = true,
 }: ChallengesManagerProps) {
   const router = useRouter();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(
+    null
+  );
+  const [isDeleting, setIsDeleting] = useState(false);
+  const canUseDom = typeof document !== "undefined";
+  const challengesList = Array.isArray(challenges) ? challenges : [];
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const challengeTypeConfig: Record<string, { label: string; color: string }> =
+    {
+      daily: { label: "Daily", color: "text-blue-400" },
+      weekly: { label: "Weekly", color: "text-green-400" },
+      monthly: { label: "Monthly", color: "text-yellow-400" },
+      special: { label: "Special", color: "text-red-400" },
+    };
 
   const handleDelete = async (challengeId: string) => {
-    setDeletingId(challengeId);
+    setIsDeleting(true);
     const result = await deleteChallengeAction(challengeId, gameId);
     if (result.error) {
       alert(result.error);
+      setIsDeleting(false);
+      return;
     }
-    setDeletingId(null);
+    setSelectedChallenge(null);
+    setIsDeleting(false);
     router.refresh();
-  };
-
-  const typeLabel = (type: string) => {
-    switch (type) {
-      case "daily":
-        return "Daily";
-      case "weekly":
-        return "Weekly";
-      case "monthly":
-        return "Monthly";
-      case "special":
-        return "Special";
-      default:
-        return type;
-    }
   };
 
   const createDialog = showCreateDialog ? (
@@ -82,59 +87,123 @@ export function ChallengesManager({
     />
   ) : null;
 
+  const selectedConfig = selectedChallenge
+    ? challengeTypeConfig[selectedChallenge.type] ?? {
+        label: selectedChallenge.type,
+        color: "text-white/60",
+      }
+    : null;
+
   return (
     <div className="space-y-3">
-      {challenges.length === 0 ? (
-        <p className="text-sm text-white/50">No challenges yet.</p>
-      ) : (
-        challenges.map((challenge) => (
-          <div
-            key={challenge.id}
-            className="flex items-center justify-between rounded-md border border-[#1f2128] bg-white/5 px-3 py-2"
-          >
-            <div className="flex-1">
-              <p className="text-white/80">{challenge.title}</p>
-              {challenge.description && (
-                <p className="text-xs text-white/50">{challenge.description}</p>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="rounded-full bg-[#D946EF]/20 px-2 py-0.5 text-[10px] uppercase tracking-wide text-[#f5a6ff]">
-                {typeLabel(challenge.type)}
-              </span>
-              {isOwner ? (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 w-8 p-0 text-red-400 hover:bg-red-500/10 hover:text-red-300"
-                  onClick={() => handleDelete(challenge.id)}
-                  disabled={deletingId === challenge.id}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              ) : (
-                <Button size="sm" variant="secondary">
-                  Join
-                </Button>
-              )}
-            </div>
+      <div className="rounded-2xl border border-[#1f2128] bg-[#0b0d12] p-6">
+        {showHeader && (
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Challenges</h2>
           </div>
-        ))
-      )}
+        )}
+        {challengesList.length === 0 ? (
+          <p className="text-white/60 text-center py-8">No challenges yet</p>
+        ) : (
+          <div className="space-y-3">
+            {challengesList.map((challenge) => {
+              const config = challengeTypeConfig[challenge.type] ?? {
+                label: challenge.type,
+                color: "text-white/60",
+              };
+              return (
+                <button
+                  type="button"
+                  key={challenge.id}
+                  onClick={() => setSelectedChallenge(challenge)}
+                  className="w-full text-left rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors p-4"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-white/80">
+                          {challenge.title}
+                        </h3>
+                        <span className={`text-xs font-medium ${config.color}`}>
+                          {config.label}
+                        </span>
+                      </div>
+                      {challenge.description && (
+                        <p className="text-sm text-white/60 mt-1 line-clamp-1">
+                          {challenge.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
-      {isOwner && (
-        <Button
-          size="sm"
-          variant="ghost"
-          className="mt-2 gap-2"
-          onClick={() => setShowCreateDialog(true)}
-        >
-          <Plus className="h-4 w-4" />
-          Add challenge
-        </Button>
-      )}
+        {isOwner && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="mt-2 gap-2"
+            onClick={() => setShowCreateDialog(true)}
+          >
+            <Plus className="h-4 w-4" />
+            Add challenge
+          </Button>
+        )}
+      </div>
 
-      {mounted && createDialog && createPortal(createDialog, document.body)}
+      <Dialog
+        open={!!selectedChallenge}
+        onOpenChange={(open) => !open && setSelectedChallenge(null)}
+      >
+        <DialogContent className="border-[#1f2128] bg-[#080a0f]">
+          {selectedChallenge && selectedConfig && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-2">
+                  <DialogTitle>{selectedChallenge.title}</DialogTitle>
+                  <span className={`text-xs font-medium ${selectedConfig.color}`}>
+                    {selectedConfig.label}
+                  </span>
+                </div>
+                <DialogDescription>
+                  {selectedChallenge.active
+                    ? "Active challenge"
+                    : "Inactive challenge"}
+                </DialogDescription>
+              </DialogHeader>
+              {selectedChallenge.description && (
+                <div className="rounded-lg bg-white/5 p-4 border border-white/10">
+                  <p className="text-white/80 whitespace-pre-wrap">
+                    {selectedChallenge.description}
+                  </p>
+                </div>
+              )}
+              <div className="flex gap-3 justify-end">
+                {isOwner && (
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleDelete(selectedChallenge.id)}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? "Deleting..." : "Delete challenge"}
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedChallenge(null)}
+                >
+                  Close
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {canUseDom && createDialog ? createPortal(createDialog, document.body) : null}
     </div>
   );
 }
@@ -171,7 +240,7 @@ function CreateChallengeDialog({
   return (
     <>
       <div
-        className="fixed inset-0 z-9998 bg-black/60"
+        className="fixed inset-0 z-[9998] bg-black/60"
         style={{
           backdropFilter: "blur(8px)",
           WebkitBackdropFilter: "blur(8px)",
@@ -181,7 +250,7 @@ function CreateChallengeDialog({
         aria-hidden="true"
       />
       <div
-        className="fixed inset-0 z-9999 flex items-center justify-center pointer-events-none"
+        className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none"
         style={{ left: isLargeScreen ? "18rem" : 0 }}
       >
         <div className="relative w-full max-w-md rounded-lg border border-[#1f2128] bg-[#0b0d12] p-6 shadow-lg mx-4 pointer-events-auto">
@@ -220,7 +289,7 @@ function CreateChallengeDialog({
                 name="description"
                 placeholder="Beat act 1 under 8 minutes."
                 maxLength={300}
-                className="min-h-20 w-full rounded-md border border-[#1f2128] bg-[#0a0b0f] px-3 py-2 text-sm text-white shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D946EF]/50"
+                className="min-h-[80px] w-full rounded-md border border-[#1f2128] bg-[#0a0b0f] px-3 py-2 text-sm text-white shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]/70"
               />
             </div>
 

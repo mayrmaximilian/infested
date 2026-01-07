@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Flame, Star, Lock, Sparkles } from "lucide-react";
+import { Trophy, Flame, Star, Lock, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Achievement = {
@@ -87,7 +87,7 @@ export function AchievementsBadges({
               "group relative flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-300",
               isUnlocked
                 ? cn(
-                    "bg-linear-to-br cursor-pointer hover:scale-110",
+                    "bg-gradient-to-br cursor-pointer hover:scale-110",
                     rarityColors[achievement.rarity],
                     rarityBorders[achievement.rarity],
                     rarityGlow[achievement.rarity]
@@ -161,7 +161,7 @@ export function LevelBadge({ level, size = "md" }: LevelBadgeProps) {
   return (
     <div
       className={cn(
-        "flex items-center justify-center rounded-full bg-linear-to-br font-bold shadow-lg",
+        "flex items-center justify-center rounded-full bg-gradient-to-br font-bold shadow-lg",
         sizeClasses[size],
         getBadgeStyle()
       )}

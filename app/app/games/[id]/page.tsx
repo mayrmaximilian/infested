@@ -1,10 +1,14 @@
+import NextImage from "next/image";
 import { Flame, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChallengesManager } from "@/components/games/challenges-manager";
 import { PitchIt } from "@/components/games/pitch-it";
 import { FollowButton } from "@/components/games/follow-button";
+import { GameUpdates } from "@/components/games/game-updates";
+import { getGameUpdates } from "@/app/actions/updates";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +52,9 @@ export default async function AppGamePage({
     .select("*")
     .eq("game_id", id)
     .order("created_at", { ascending: false });
+
+  // Fetch game updates
+  const updates = await getGameUpdates(id);
 
   // Fetch pitches for this game (top voted)
   const { data: pitches } = await supabase
@@ -108,13 +115,15 @@ export default async function AppGamePage({
 
   const hero = data.hero_url;
   const cover = data.cover_url;
+  const wishlist = data.wishlist_count ?? "—";
+  const followers = data.followers_count ?? "—";
   const status = data.status ?? "Coming soon";
   const genre = data.genre ?? "Uncategorized";
 
   return (
     <div className="space-y-6">
       {/* Hero section with background image */}
-      <div className="relative h-80 overflow-hidden rounded-2xl border border-[#2c1d35] bg-[#08080f] shadow-[0_30px_90px_-60px_#000]">
+      <div className="relative h-[320px] overflow-hidden rounded-2xl border border-[#2c1d35] bg-[#08080f] shadow-[0_30px_90px_-60px_#000]">
         {/* Background hero image - full bleed, constrained */}
         {hero && (
           <img
@@ -134,7 +143,7 @@ export default async function AppGamePage({
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,#D946EF33,transparent_35%),radial-gradient(circle_at_80%_0%,#22D3EE33,transparent_35%),linear-gradient(135deg,#0a0a12,#05060a)]" />
         )}
         {/* Gradient overlay for readability */}
-        <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/70 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40" />
 
         {/* Content on top of hero */}
         <div className="relative z-10 flex h-full flex-col gap-6 p-6 sm:flex-row sm:items-center sm:p-8">
@@ -219,7 +228,7 @@ export default async function AppGamePage({
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="border-[#1f2128] bg-linear-to-br from-[#0b0d12] via-[#0f0f18] to-[#1a0f1c]">
+        <Card className="border-[#1f2128] bg-gradient-to-br from-[#0b0d12] via-[#0f0f18] to-[#1a0f1c]">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Leaderboard</CardTitle>
             <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">
@@ -246,7 +255,7 @@ export default async function AppGamePage({
           </CardContent>
         </Card>
 
-        <Card className="border-[#1f2128] bg-linear-to-br from-[#0b0d12] via-[#0f0f18] to-[#111121]">
+        <Card className="border-[#1f2128] bg-gradient-to-br from-[#0b0d12] via-[#0f0f18] to-[#111121]">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Challenges</CardTitle>
             <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">
@@ -258,13 +267,14 @@ export default async function AppGamePage({
               gameId={id}
               challenges={challenges ?? []}
               isOwner={isOwner}
+              showHeader={false}
             />
           </CardContent>
         </Card>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="border-[#1f2128] bg-linear-to-br from-[#0b0d12] via-[#0f0f18] to-[#0e131f]">
+        <Card className="border-[#1f2128] bg-gradient-to-br from-[#0b0d12] via-[#0f0f18] to-[#0e131f]">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Socials & forum</CardTitle>
             <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">
@@ -302,44 +312,26 @@ export default async function AppGamePage({
           </CardContent>
         </Card>
 
-        <Card className="border-[#1f2128] bg-linear-to-br from-[#0b0d12] via-[#0f0f18] to-[#0f1424]">
+        <Card className="border-[#1f2128] bg-gradient-to-br from-[#0b0d12] via-[#0f0f18] to-[#0f1424]">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Updates</CardTitle>
             <span className="rounded-full bg-[#D946EF]/10 px-3 py-1 text-xs text-[#D946EF]">
-              Live
+              {Array.isArray(updates) && updates.length > 0 ? "Live" : "None"}
             </span>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-white/80">
-            {[
-              {
-                title: "Patch 0.3.1",
-                desc: "Balance tweaks, new relic pool, UI polish.",
-              },
-              { title: "Dev note", desc: "Next playtest window opens Friday." },
-              {
-                title: "Roadmap peek",
-                desc: "Co-op lobby & new boss fight in progress.",
-              },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="flex items-center justify-between rounded-md border border-[#1f2128] bg-white/5 px-3 py-2"
-              >
-                <div>
-                  <p className="font-medium text-white">{item.title}</p>
-                  <p className="text-white/60">{item.desc}</p>
-                </div>
-                <Button size="sm" variant="secondary">
-                  Read
-                </Button>
-              </div>
-            ))}
+          <CardContent>
+            <GameUpdates
+              updates={updates}
+              isOwner={user?.id === data?.owner_id}
+              gameId={id}
+              showHeader={false}
+            />
           </CardContent>
         </Card>
       </div>
 
       {/* Pitch It - Community Feature Voting */}
-      <Card className="border-[#1f2128] bg-linear-to-br from-[#0b0d12] via-[#0f0f18] to-[#1a1025]">
+      <Card className="border-[#1f2128] bg-gradient-to-br from-[#0b0d12] via-[#0f0f18] to-[#1a1025]">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">🎯 Pitch It</CardTitle>
           <span className="rounded-full bg-[#D946EF]/20 px-3 py-1 text-xs text-[#f5a6ff]">

@@ -1,6 +1,5 @@
-import { Trophy, ArrowLeft } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,13 +32,6 @@ export default async function LeaderboardPage() {
     <div className="space-y-8">
       {/* Header */}
       <header className="space-y-1">
-        <Link
-          href="/app"
-          className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white mb-4"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Overview
-        </Link>
         <div className="flex items-center gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#D946EF]/20 to-[#22D3EE]/20 ring-1 ring-white/10">
             <Trophy className="h-7 w-7 text-[#D946EF]" />

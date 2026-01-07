@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
-import { ThumbsUp, X, Lightbulb, Trash2 } from "lucide-react";
+import { Plus, ThumbsUp, X, Lightbulb, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -121,7 +121,7 @@ export function PitchIt({
             >
               {/* Rank badge */}
               <div
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${
                   index === 0
                     ? "bg-[#D946EF]/30 text-[#f5a6ff]"
                     : index === 1
@@ -224,7 +224,7 @@ function SubmitPitchDialog({
   return (
     <>
       <div
-        className="fixed inset-0 z-9998 bg-black/60"
+        className="fixed inset-0 z-[9998] bg-black/60"
         style={{
           backdropFilter: "blur(8px)",
           WebkitBackdropFilter: "blur(8px)",
@@ -234,7 +234,7 @@ function SubmitPitchDialog({
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none fixed inset-0 z-9999 flex items-center justify-center"
+        className="pointer-events-none fixed inset-0 z-[9999] flex items-center justify-center"
         style={{ left: isLargeScreen ? "18rem" : 0 }}
       >
         <div className="pointer-events-auto relative mx-4 w-full max-w-md rounded-lg border border-[#1f2128] bg-[#0b0d12] p-6 shadow-lg">
@@ -281,7 +281,7 @@ function SubmitPitchDialog({
                 name="description"
                 placeholder="Describe your feature idea..."
                 maxLength={500}
-                className="min-h-20 w-full rounded-md border border-[#1f2128] bg-[#0a0b0f] px-3 py-2 text-sm text-white shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D946EF]/50"
+                className="min-h-[80px] w-full rounded-md border border-[#1f2128] bg-[#0a0b0f] px-3 py-2 text-sm text-white shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22D3EE]/70"
               />
             </div>
 
