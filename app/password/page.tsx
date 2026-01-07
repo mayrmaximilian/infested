@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,13 +11,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Logo } from "@/components/logo";
+import Image from "next/image";
 
 export default function PasswordPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,17 +35,28 @@ export default function PasswordPage() {
     if (password === correctPassword) {
       // Set cookie
       document.cookie = `app_password=${password}; path=/; max-age=604800`; // 7 days
-      setTimeout(() => {
-        router.push("/");
-        router.refresh();
-      }, 100);
-      return;
+      // Just redirect without refresh to avoid freezing
+      router.push("/");
     } else {
       setError("Incorrect password. Please try again.");
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_10%,#D946EF30,transparent_35%),radial-gradient(circle_at_85%_0%,#22D3EE24,transparent_35%),radial-gradient(circle_at_50%_80%,#2DD4BF22,transparent_35%)]" />
+        <div className="absolute inset-x-6 top-12 -z-10 h-80 rounded-full bg-[#D946EF]/10 blur-[140px]" />
+        <Card className="w-full max-w-md border-[#1f2128] bg-[#080a0f]/80 backdrop-blur">
+          <CardHeader className="space-y-2 text-center">
+            <div className="flex justify-center mb-4 h-10 w-[180px]" />
+            <CardTitle>University Project</CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
@@ -50,7 +66,16 @@ export default function PasswordPage() {
       <Card className="w-full max-w-md border-[#1f2128] bg-[#080a0f]/80 backdrop-blur">
         <CardHeader className="space-y-2 text-center">
           <div className="flex justify-center mb-4">
-            <Logo className="h-10" />
+            <div className="relative h-10 w-[180px]">
+              <Image
+                src="/InfestedLogo2.png"
+                alt="infested logo"
+                fill
+                sizes="180px"
+                priority
+                className="object-contain drop-shadow-[0_0_25px_rgba(217,70,239,0.35)]"
+              />
+            </div>
           </div>
           <CardTitle>University Project</CardTitle>
           <CardDescription>
