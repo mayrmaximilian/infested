@@ -220,7 +220,7 @@ export default async function AppGamePage({
               />
               <Button className="gap-2">
                 <Sparkles className="h-4 w-4" />
-                Wishlist
+                Buy Game
               </Button>
             </div>
           </div>
